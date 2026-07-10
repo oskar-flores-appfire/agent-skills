@@ -1,21 +1,26 @@
 import { animate } from 'https://cdn.jsdelivr.net/npm/motion@latest/+esm';
 
-// === Color tokens (house palette) ===
-export const colors = {
-  bg:            '#fafaf9',
-  surface:       '#ffffff',
-  border:        '#e2e8f0',
-  textPrimary:   '#1e293b',
-  textSecondary: '#64748b',
-  accent:        '#6366f1',
-  dimmed:        '#cbd5e1',
-  success:       '#10b981',
-  warning:       '#f59e0b',
-  danger:        '#ef4444',
-  lexical:       '#f59e0b',   // BM25 (amber)
-  semantic:      '#6366f1',   // embeddings / kNN (indigo)
-  fusion:        '#8b5cf6',   // RRF fused (violet)
+// === Color tokens ===
+// Single source of truth is the CSS custom properties in index.html.
+// `colors` is filled in place at deck init by syncColors(); read it inside
+// render()/steps (which run after init), never at module top level.
+const COLOR_VARS = {
+  bg: '--bg', surface: '--surface', border: '--border',
+  textPrimary: '--text-primary', textSecondary: '--text-secondary',
+  accent: '--accent', dimmed: '--dimmed',
+  success: '--success', warning: '--warning', danger: '--danger',
+  lexical: '--lexical', semantic: '--semantic', fusion: '--fusion',
 };
+
+export const colors = {};
+
+/** Read the active theme's CSS variables into `colors` (in place). */
+export function syncColors() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const [key, cssVar] of Object.entries(COLOR_VARS)) {
+    colors[key] = cs.getPropertyValue(cssVar).trim();
+  }
+}
 
 // === DOM helpers ===
 

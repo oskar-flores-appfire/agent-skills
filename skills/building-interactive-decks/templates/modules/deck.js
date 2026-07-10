@@ -1,4 +1,4 @@
-import { el, setInstant } from './shared.js';
+import { el, setInstant, syncColors } from './shared.js';
 
 /**
  * Slide deck engine. Each slide module exports:
@@ -8,6 +8,7 @@ import { el, setInstant } from './shared.js';
  * Going back re-renders the slide with one fewer step applied (instantly).
  */
 export function initDeck(slides) {
+  syncColors();
   const stage = document.getElementById('stage');
   const dotsBox = document.getElementById('dots');
   const counter = document.getElementById('counter');

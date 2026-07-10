@@ -8,14 +8,57 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #fafaf9;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --accent: #6366f1;
+      --dimmed: #cbd5e1;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --lexical: #f59e0b;
+      --semantic: #6366f1;
+      --fusion: #8b5cf6;
+      /* CSS-only chrome tints (not synced to the JS colors object) */
+      --callout-bg: #f8fafc;
+      --callout-text: #475569;
+      --chrome-muted: #94a3b8;
+      --overview-bg: rgba(250, 250, 249, 0.96);
+      --accent-ring: rgba(99, 102, 241, 0.15);
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0b0f17;
+      --surface: #151b26;
+      --border: #263042;
+      --text-primary: #e5e9f0;
+      --text-secondary: #94a3b8;
+      --accent: #818cf8;
+      --dimmed: #3b465c;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --lexical: #fbbf24;
+      --semantic: #818cf8;
+      --fusion: #a78bfa;
+      --callout-bg: #1a2130;
+      --callout-text: #cbd5e1;
+      --chrome-muted: #64748b;
+      --overview-bg: rgba(11, 15, 23, 0.96);
+      --accent-ring: rgba(129, 140, 248, 0.2);
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body { height: 100%; overflow: hidden; }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: #fafaf9;
-      color: #1e293b;
+      background: var(--bg);
+      color: var(--text-primary);
       line-height: 1.6;
       user-select: none;
     }
@@ -39,7 +82,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      color: #6366f1;
+      color: var(--accent);
     }
 
     .slide-title {
@@ -47,12 +90,12 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       text-align: center;
-      color: #1e293b;
+      color: var(--text-primary);
     }
 
     .slide-sub {
       font-size: 1.02rem;
-      color: #64748b;
+      color: var(--text-secondary);
       text-align: center;
       max-width: 780px;
     }
@@ -65,7 +108,7 @@
       max-width: 980px;
     }
 
-    .hero-subtitle { font-size: 1.3rem; color: #64748b; text-align: center; }
+    .hero-subtitle { font-size: 1.3rem; color: var(--text-secondary); text-align: center; }
     .hero-subtitle .word { display: inline-block; margin-right: 0.3em; opacity: 0; }
 
     .hero-stats { display: flex; gap: 28px; margin-top: 36px; flex-wrap: wrap; justify-content: center; }
@@ -73,8 +116,8 @@
     .hero-stat {
       text-align: center;
       padding: 14px 24px;
-      background: #ffffff;
-      border: 1.5px solid #e2e8f0;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
       border-radius: 10px;
       min-width: 140px;
     }
@@ -82,14 +125,14 @@
     .hero-stat-value {
       font-size: 1.6rem;
       font-weight: 800;
-      color: #6366f1;
+      color: var(--accent);
       letter-spacing: -0.02em;
       font-family: 'JetBrains Mono', monospace;
     }
 
     .hero-stat-label {
       font-size: 0.72rem;
-      color: #64748b;
+      color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-top: 4px;
@@ -101,12 +144,12 @@
       max-width: 700px;
       text-align: center;
       padding: 14px 24px;
-      background: #f8fafc;
-      border-left: 3px solid #6366f1;
+      background: var(--callout-bg);
+      border-left: 3px solid var(--accent);
       border-radius: 0 8px 8px 0;
     }
 
-    .callout p { font-size: 0.95rem; color: #475569; }
+    .callout p { font-size: 0.95rem; color: var(--callout-text); }
 
     .mono { font-family: 'JetBrains Mono', monospace; }
 
@@ -126,12 +169,12 @@
       width: 9px;
       height: 9px;
       border-radius: 50%;
-      background: #cbd5e1;
+      background: var(--dimmed);
       cursor: pointer;
       transition: background 0.25s, transform 0.25s;
     }
 
-    .dot.active { background: #6366f1; transform: scale(1.35); }
+    .dot.active { background: var(--accent); transform: scale(1.35); }
 
     .deck-counter {
       position: fixed;
@@ -139,7 +182,7 @@
       right: 28px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
-      color: #94a3b8;
+      color: var(--chrome-muted);
       z-index: 50;
     }
 
@@ -148,14 +191,14 @@
       bottom: 22px;
       left: 28px;
       font-size: 0.75rem;
-      color: #94a3b8;
+      color: var(--chrome-muted);
       z-index: 50;
     }
 
     .deck-hint kbd {
       font-family: 'JetBrains Mono', monospace;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 4px;
       padding: 1px 6px;
       font-size: 0.7rem;
@@ -166,7 +209,7 @@
     .overview-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(250, 250, 249, 0.96);
+      background: var(--overview-bg);
       z-index: 100;
       display: none;
       align-items: center;
@@ -182,21 +225,21 @@
     }
 
     .overview-tile {
-      background: #ffffff;
-      border: 1.5px solid #e2e8f0;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
       border-radius: 12px;
       padding: 18px;
       cursor: pointer;
       transition: border-color 0.2s, transform 0.2s;
     }
 
-    .overview-tile:hover { border-color: #6366f1; transform: translateY(-2px); }
-    .overview-tile.current { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+    .overview-tile:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .overview-tile.current { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
 
     .overview-tile .num {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.72rem;
-      color: #94a3b8;
+      color: var(--chrome-muted);
     }
 
     .overview-tile .name { font-weight: 700; font-size: 0.95rem; margin-top: 6px; }
