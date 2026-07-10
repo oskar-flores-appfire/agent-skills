@@ -35,11 +35,28 @@ Skills land in your agent's skills directory (for Claude Code: `.claude/skills/`
 
 ### spec-summarizer
 
-Use it when a spec is too long to share and nobody will read it. It produces either a companion `<spec>.summary.md` linked to the source, or a summary prepended to the spec between mechanical split markers. The output leads with a takeaway callout and a decisions table, includes exactly one Mermaid diagram, and ends with a collapsible drill-down. A bounded Reader Test (a fresh agent answering reviewer questions from the summary alone) catches gaps before you ship it.
+Use it when a spec is too long to share and nobody will read it.
+
+Two output modes:
+
+- **Companion** (default): writes `<spec>.summary.md` next to the spec, linked both ways.
+- **Prepend**: inserts the summary as the spec's first section, between markers that let you split it back out later with a one-line script.
+
+The summary leads with the takeaway and a decisions table, includes exactly one Mermaid diagram, and tucks extra depth into a collapsible drill-down.
+
+Before declaring done, the skill runs a Reader Test: a fresh agent, given only the summary, must answer the questions a reviewer would ask. Gaps get revised until they pass.
 
 ### building-interactive-decks
 
-Use it when building an interactive presentation, explainer, or architecture walkthrough. Copy the bundled `templates/` folder, write one module per slide, and serve it statically. The engine handles navigation dots, an overview grid, hash routing, and instant replay on back-navigation. House conventions: light theme, Inter + JetBrains Mono, no em dashes, no emojis. The engine is self-contained and works in any repo; the only external dependency is the Motion CDN.
+Use it to build an interactive slide deck for a demo or architecture walkthrough.
+
+Three steps:
+
+1. Copy the bundled `templates/` folder to your docs.
+2. Write one JS module per slide.
+3. Serve the folder statically.
+
+The engine handles keyboard navigation, per-slide build steps, an overview grid, and instant replay when stepping back. It is fully self-contained; the only external dependency is the Motion animation CDN.
 
 ## Repository layout
 
