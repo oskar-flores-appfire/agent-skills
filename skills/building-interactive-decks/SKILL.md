@@ -1,6 +1,6 @@
 ---
 name: building-interactive-decks
-description: Use when creating an interactive presentation, explainer, or slide deck as a self-contained HTML artifact; covers architecture walkthroughs, hackathon demos, and keyboard-driven decks with per-slide build steps.
+description: Use when creating an interactive presentation, explainer, or slide deck as a self-contained HTML artifact; covers architecture walkthroughs (including AWS architecture diagrams with service icons), light or dark themes, hackathon demos, and keyboard-driven decks with per-slide build steps.
 ---
 
 # Building Interactive Decks
@@ -51,6 +51,24 @@ Light theme, generous whitespace. Fonts: Inter (UI) + JetBrains Mono (data) from
 | category accents (amber / indigo / violet) | `#f59e0b` / `#6366f1` / `#8b5cf6` |
 | success / danger | `#10b981` / `#ef4444` |
 
+### Theme (light default, opt-in dark)
+
+Colors are driven by CSS custom properties defined once in `index.html` (`:root` for light,
+`:root[data-theme="dark"]` for dark). `shared.js` reads them into `colors` at init via
+`syncColors()`, so JS-built styles and CSS never diverge.
+
+- Default is light. For a dark deck, set `data-theme="dark"` on the `<html>` tag; omit it for light.
+- Never hardcode hex values in slides. Use `colors.*` in JS and `var(--token)` in CSS.
+
+| Token | Light | Dark |
+|---|---|---|
+| bg | `#fafaf9` | `#0b0f17` |
+| surface | `#ffffff` | `#151b26` |
+| border | `#e2e8f0` | `#263042` |
+| text primary / secondary | `#1e293b` / `#64748b` | `#e5e9f0` / `#94a3b8` |
+| accent | `#6366f1` | `#818cf8` |
+| success / warning / danger | `#10b981` / `#f59e0b` / `#ef4444` | `#34d399` / `#fbbf24` / `#f87171` |
+
 ## Writing conventions
 
 - NO em dashes anywhere; use `;` `:` or parentheses.
@@ -76,8 +94,28 @@ else { animate(words, { opacity: [0, 1], y: [10, 0] }, { delay: stagger(0.07) })
 - SVG pointer-drag: `pointerdown` on the element, `setPointerCapture`, then map `pointermove` coordinates via `svg.getBoundingClientRect()` scaled to the viewBox.
 - Keep step functions idempotent; back navigation re-renders the slide and replays steps instantly.
 
+## Architecture diagrams (AWS icons)
+
+- Download the SVGs you need from https://aws-icons.com/ into the deck's `assets/aws/` folder,
+  named short and lowercase (`fargate.svg`, `sqs.svg`, `aurora.svg`, `s3.svg`, `cloudfront.svg`).
+  The skill template ships an empty `assets/aws/` (see its README); each deck bundles its own icons.
+- `awsIcon(name, size)` inlines a bundled icon as an `<img>`; full-color icons are never recolored.
+- `serviceNode(iconName, label, sublabel)` builds a themed diagram card (icon + label) from
+  `colors.surface`/`colors.border`, so nodes theme automatically in light and dark.
+- Draw connectors/arrows per-slide with `svgEl` or a simple styled element (a Unicode arrow is fine;
+  NO em dashes). On dark backgrounds prefer AWS full-color "Resource" icons; label text uses `colors`.
+
+## Common mistakes
+
+- Hardcoding hex colors in a slide instead of `colors.*` / `var(--token)`; breaks dark theme.
+- Recoloring full-color AWS icons (setting `stroke`/`fill`); use them as-is.
+- Referencing an AWS icon that was never downloaded into `assets/aws/` (image 404s).
+- Reading `colors` at slide-module top level; it is empty until `syncColors()` runs at init. Read it inside `render()`/steps.
+- Forgetting `data-theme="dark"` on `<html>` when a dark deck was requested.
+
 ## Verification
 
 1. Serve the deck, then walk it with a browser automation tool (Playwright, or the playwright-cli skill if installed): arrow through EVERY step of every slide, check the console for errors, screenshot key slides.
 2. Slide-removal acceptance test: comment out one line in `SLIDES`; the deck must still work (dots, counter, overview, hash navigation).
 3. Press `←` through a fully built slide: reveals must apply instantly, no animation replay.
+4. Backward-compat: a default deck (no `data-theme`) must look identical to the light house style; a dark deck (`data-theme="dark"`) must keep AA-legible text on the dark background.

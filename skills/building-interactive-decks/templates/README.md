@@ -1,6 +1,18 @@
 # <Deck Title>
 
-Interactive slide deck built on the shared deck engine from the building-interactive-decks skill. Visual-first, light theme, no formulas on screen.
+Interactive slide deck built on the shared deck engine from the building-interactive-decks skill. Visual-first, light theme by default, no formulas on screen.
+
+## Theme
+
+Default is light. For a dark deck, set `data-theme="dark"` on the `<html>` tag in `index.html`;
+omit it for light. Colors live as CSS custom properties in `index.html` and are read into
+`colors` at init by `syncColors()` (`modules/shared.js`); never hardcode hex values in slides.
+
+## AWS icons
+
+Drop the SVGs a deck needs into `assets/aws/` (see that folder's README), then reference them
+with `awsIcon(name, size)` or `serviceNode(iconName, label, sublabel)` from `modules/shared.js`.
+This folder ships empty; each deck bundles only the icons it uses.
 
 ## Run
 
