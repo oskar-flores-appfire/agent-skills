@@ -119,6 +119,11 @@ export function serviceNode(iconName, label, sublabel = '') {
   ]);
 }
 
+/** A simple left-to-right arrow separator for diagram flows. */
+export function connector() {
+  return el('div', { style: { color: colors.dimmed, fontSize: '1.6rem', fontWeight: '700' } }, ['→']);
+}
+
 // === Instant mode ===
 // While the deck replays steps (navigating backwards or restoring a slide),
 // reveals must apply final state without animating.

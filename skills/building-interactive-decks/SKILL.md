@@ -102,8 +102,9 @@ else { animate(words, { opacity: [0, 1], y: [10, 0] }, { delay: stagger(0.07) })
 - `awsIcon(name, size)` inlines a bundled icon as an `<img>`; full-color icons are never recolored.
 - `serviceNode(iconName, label, sublabel)` builds a themed diagram card (icon + label) from
   `colors.surface`/`colors.border`, so nodes theme automatically in light and dark.
-- Draw connectors/arrows per-slide with `svgEl` or a simple styled element (a Unicode arrow is fine;
-  NO em dashes). On dark backgrounds prefer AWS full-color "Resource" icons; label text uses `colors`.
+- `connector()` from `shared.js` is the default arrow separator between diagram nodes (a themed
+  Unicode arrow; NO em dashes). For anything more elaborate, draw per-slide with `svgEl`. On dark
+  backgrounds prefer AWS full-color "Resource" icons; label text uses `colors`.
 
 ## Common mistakes
 
