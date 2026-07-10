@@ -93,6 +93,32 @@ export function callout(html) {
   return el('div', { className: 'callout step' }, [el('p', { innerHTML: html })]);
 }
 
+// === AWS architecture diagram helpers ===
+
+/** Inline a locally bundled AWS architecture SVG (full-color; never recolored). */
+export function awsIcon(name, size = 48) {
+  return el('img', {
+    src: `assets/aws/${name}.svg`,
+    width: size, height: size, alt: name,
+    style: { display: 'block', flexShrink: '0' },
+  });
+}
+
+/** A themed diagram node: an AWS icon above a label (and optional sublabel). */
+export function serviceNode(iconName, label, sublabel = '') {
+  return el('div', {
+    style: {
+      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+      background: colors.surface, border: `1.5px solid ${colors.border}`,
+      borderRadius: '12px', padding: '16px 18px', minWidth: '120px', textAlign: 'center',
+    },
+  }, [
+    awsIcon(iconName, 44),
+    el('div', { textContent: label, style: { fontWeight: '700', fontSize: '0.9rem', color: colors.textPrimary } }),
+    sublabel ? el('div', { textContent: sublabel, style: { fontSize: '0.72rem', color: colors.textSecondary } }) : null,
+  ]);
+}
+
 // === Instant mode ===
 // While the deck replays steps (navigating backwards or restoring a slide),
 // reveals must apply final state without animating.
