@@ -1,6 +1,6 @@
-# Appfire Agent Skills
+# Oskar's Agent Skills
 
-Reusable [Agent Skills](https://github.com/vercel-labs/skills) for AI coding agents (Claude Code, Codex, Cursor, OpenCode, and others). Each skill is a folder under `skills/` containing a `SKILL.md` with YAML frontmatter plus any supporting templates or references.
+Personal collection of reusable [Agent Skills](https://github.com/vercel-labs/skills) by Oskar Flores, for AI coding agents (Claude Code, Codex, Cursor, OpenCode, and others). Each skill is a folder under `skills/` containing a `SKILL.md` with YAML frontmatter plus any supporting templates or references.
 
 ## Installation
 
@@ -39,7 +39,7 @@ Use it when a spec is too long to share and nobody will read it. It produces eit
 
 ### building-interactive-decks
 
-Use it when building an interactive presentation, explainer, or architecture walkthrough. Copy the bundled `templates/` folder, write one module per slide, and serve it statically. The engine handles navigation dots, an overview grid, hash routing, and instant replay on back-navigation. Conventions were built for SignalIQ decks (light theme, Inter + JetBrains Mono, no em dashes, no emojis) but the engine is self-contained and works in any repo; the only external dependency is the Motion CDN.
+Use it when building an interactive presentation, explainer, or architecture walkthrough. Copy the bundled `templates/` folder, write one module per slide, and serve it statically. The engine handles navigation dots, an overview grid, hash routing, and instant replay on back-navigation. House conventions: light theme, Inter + JetBrains Mono, no em dashes, no emojis. The engine is self-contained and works in any repo; the only external dependency is the Motion CDN.
 
 ## Repository layout
 

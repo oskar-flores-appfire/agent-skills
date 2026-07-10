@@ -1,13 +1,13 @@
 # <Deck Title>
 
-Interactive slide deck built on the shared SignalIQ deck engine. Visual-first, light theme, no formulas on screen.
+Interactive slide deck built on the shared deck engine from the building-interactive-decks skill. Visual-first, light theme, no formulas on screen.
 
 ## Run
 
-Existing explainers occupy ports 3000-3004; pick the next free port and record it here:
+Pick a free port (check sibling decks' READMEs for claimed ones) and record it here:
 
 ```bash
-cd docs/architecture/interactive/<name>
+cd <deck-folder>
 npx serve . -p <port>
 ```
 

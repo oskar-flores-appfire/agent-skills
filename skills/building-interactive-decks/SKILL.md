@@ -1,22 +1,22 @@
 ---
 name: building-interactive-decks
-description: Use when creating an interactive presentation, explainer, or slide deck for SignalIQ; covers docs under docs/architecture/interactive/, hackathon demos, and architecture walkthroughs.
+description: Use when creating an interactive presentation, explainer, or slide deck as a self-contained HTML artifact; covers architecture walkthroughs, hackathon demos, and keyboard-driven decks with per-slide build steps.
 ---
 
 # Building Interactive Decks
 
-House style and reusable engine for SignalIQ interactive presentations. Canonical example: `docs/architecture/interactive/hackathon-hybrid/`.
+House style and reusable engine for interactive presentations. Canonical example: this skill's `templates/` (see `modules/slide-example.js`).
 
 ## Format choice
 
 - **Slide deck** (this skill's `templates/`): presenting live; a narrator controls pacing with arrow keys and build steps.
-- **Scroll-driven explainer** (see `docs/architecture/interactive/hybrid-search/`): self-serve reading; scroll-snap sections with Motion `inView` triggers. Older style; prefer the deck unless the artifact is meant to be read alone.
+- **Scroll-driven explainer**: self-serve reading; scroll-snap sections with Motion `inView` triggers. Prefer the deck unless the artifact is meant to be read alone.
 
 ## Quick start
 
-1. Copy `templates/` from this skill to `docs/architecture/interactive/<name>/`. The deck folder is fully self-contained (any location works); the only external dependency is the Motion CDN.
+1. Copy `templates/` from this skill to wherever the deck should live (e.g. `docs/<topic>-deck/`). The deck folder is fully self-contained (any location works); the only external dependency is the Motion CDN.
 2. Write one module per slide in `modules/slide-*.js`; register each in the `SLIDES` array in `index.html`.
-3. Run: `npx serve . -p <port>`. Port convention: each deck claims a port in its README; find the next free one with `rg -i 'port' docs/architecture/interactive/*/README.md` and record yours in the new deck's README.
+3. Run: `npx serve . -p <port>`. Port convention: each deck claims a port in its README; record yours there to avoid collisions with sibling decks.
 
 ## Slide module interface
 
@@ -48,9 +48,7 @@ Light theme, generous whitespace. Fonts: Inter (UI) + JetBrains Mono (data) from
 | text primary / secondary | `#1e293b` / `#64748b` |
 | border | `#e2e8f0` |
 | accent (indigo) | `#6366f1` |
-| lexical / BM25 (amber) | `#f59e0b` |
-| semantic / kNN | indigo `#6366f1` |
-| fusion / RRF (violet) | `#8b5cf6` |
+| category accents (amber / indigo / violet) | `#f59e0b` / `#6366f1` / `#8b5cf6` |
 | success / danger | `#10b981` / `#ef4444` |
 
 ## Writing conventions
@@ -75,11 +73,11 @@ else { animate(words, { opacity: [0, 1], y: [10, 0] }, { delay: stagger(0.07) })
 ## Interactive playgrounds
 
 - Mark interactive containers with `data-interactive` so clicks inside do not advance the deck (buttons, links, inputs are excluded automatically).
-- SVG pointer-drag: `pointerdown` on the element, `setPointerCapture`, then map `pointermove` coordinates via `svg.getBoundingClientRect()` scaled to the viewBox (see `slide-cosine.js`).
+- SVG pointer-drag: `pointerdown` on the element, `setPointerCapture`, then map `pointermove` coordinates via `svg.getBoundingClientRect()` scaled to the viewBox.
 - Keep step functions idempotent; back navigation re-renders the slide and replays steps instantly.
 
 ## Verification
 
-1. Serve the deck, then walk it with playwright-cli: arrow through EVERY step of every slide, check the console for errors, screenshot key slides.
+1. Serve the deck, then walk it with a browser automation tool (Playwright, or the playwright-cli skill if installed): arrow through EVERY step of every slide, check the console for errors, screenshot key slides.
 2. Slide-removal acceptance test: comment out one line in `SLIDES`; the deck must still work (dots, counter, overview, hash navigation).
 3. Press `←` through a fully built slide: reveals must apply instantly, no animation replay.
