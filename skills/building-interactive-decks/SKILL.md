@@ -69,6 +69,8 @@ Colors are driven by CSS custom properties defined once in `index.html` (`:root`
 | accent | `#6366f1` | `#818cf8` |
 | success / warning / danger | `#10b981` / `#f59e0b` / `#ef4444` | `#34d399` / `#fbbf24` / `#f87171` |
 
+This table is representative, not exhaustive; the full token set (including `dimmed`, `lexical`, `semantic`, `fusion`) is defined in `index.html`'s `:root` / `:root[data-theme="dark"]` blocks.
+
 ## Writing conventions
 
 - NO em dashes anywhere; use `;` `:` or parentheses.
@@ -102,6 +104,8 @@ else { animate(words, { opacity: [0, 1], y: [10, 0] }, { delay: stagger(0.07) })
 - `awsIcon(name, size)` inlines a bundled icon as an `<img>`; full-color icons are never recolored.
 - `serviceNode(iconName, label, sublabel)` builds a themed diagram card (icon + label) from
   `colors.surface`/`colors.border`, so nodes theme automatically in light and dark.
+- Unlike `callout()`, `serviceNode()` does not bake in the `step` class: it is visible on render,
+  so to reveal it as a build step, add `className: 'step'` to the node (or a wrapper).
 - `connector()` from `shared.js` is the default arrow separator between diagram nodes (a themed
   Unicode arrow; NO em dashes). For anything more elaborate, draw per-slide with `svgEl`. On dark
   backgrounds prefer AWS full-color "Resource" icons; label text uses `colors`.
