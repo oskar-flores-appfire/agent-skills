@@ -70,13 +70,13 @@ Say something like:
 
 The skill converts that into steps:
 
-1. **Scaffold** — interviews you (subject, protected paths, data sources, model config, budget) and creates a self-contained `research/<slug>-autoresearch/` folder.
-2. **Goal → questions** — turns "improve the prompt" into falsifiable questions in `QUESTIONS.md`, each with a numeric prediction; "what actually fails today" (free data mining) always comes before "does my fix work" (paid calls).
-3. **Port + label** — production prompt goes byte-faithful into `harnesses/prompts.py` as v1; labeled cases into `fixtures/cases.jsonl`.
-4. **Run** — `./loop.sh` grinds through the questions, one headless experiment per iteration, committing its evidence as it goes. `touch STOP` stops it.
-5. **Read results** — findings in `NOTEBOOK.md` and `reports/`; open `viewer.html` to click through cases, model rationales, and control-vs-variant comparisons.
+1. **Scaffold**: interviews you (subject, protected paths, data sources, model config, budget) and creates a self-contained `research/<slug>-autoresearch/` folder.
+2. **Goal → questions**: turns "improve the prompt" into falsifiable questions in `QUESTIONS.md`, each with a numeric prediction; "what actually fails today" (free data mining) always comes before "does my fix work" (paid calls).
+3. **Port + label**: production prompt goes byte-faithful into `harnesses/prompts.py` as v1; labeled cases into `fixtures/cases.jsonl`.
+4. **Run**: `./loop.sh` grinds through the questions, one headless experiment per iteration, committing its evidence as it goes. `touch STOP` stops it.
+5. **Read results**: findings in `NOTEBOOK.md` and `reports/`; open `viewer.html` to click through cases, model rationales, and control-vs-variant comparisons.
 
-Not for a one-off "does wording B beat A" check — copy the bundled harness and run one battery manually instead. The scaffolded folder is fully self-contained; the loop runs without this skill installed.
+Not for a one-off "does wording B beat A" check; copy the bundled harness and run one battery manually instead. The scaffolded folder is fully self-contained; the loop runs without this skill installed.
 
 ## Repository layout
 
