@@ -113,6 +113,16 @@ Open `viewer.html` in a browser and load one or more
 fold open to show per-rep answers, rationales, latency, and raw output; loading
 two batteries side by side gives a control-vs-variant comparison.
 
+For a one-link view, serve this directory and pass the files in the URL:
+
+```bash
+python3 -m http.server 8734
+# then open:
+# http://localhost:8734/viewer.html?files=campaigns/<a>/control.json,campaigns/<b>/variant.json
+```
+
+The first file listed is treated as the comparison baseline.
+
 ## Faithfulness caveats (MICRO vs production)
 
 Record here every known divergence between the harness and production, with

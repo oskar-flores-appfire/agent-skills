@@ -109,8 +109,11 @@ synthetic ones.
 
 Tell the operator: how to launch (`./loop.sh`, `MAX_ITER`, permission posture
 via `AUTORESEARCH_CLAUDE_FLAGS`), how to stop (`touch STOP`), where results
-land (NOTEBOOK.md, `reports/`), and how to inspect campaigns (`viewer.html`
-in a browser, load one or more battery JSONs, click rows to fold open reps).
+land (NOTEBOOK.md, `reports/`), and how to inspect campaigns: `viewer.html`
+in a browser (file picker or drag and drop), or serve the research directory
+with `python3 -m http.server` and open
+`viewer.html?files=<control>.json,<variant>.json` for a preloaded one-link
+view (the first file listed is the comparison baseline).
 Launching the loop is the operator's consent for per-iteration commits;
 nothing is ever pushed.
 
