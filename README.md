@@ -62,17 +62,21 @@ The engine handles keyboard navigation, per-slide build steps, an overview grid,
 
 ### autoresearch
 
-Use it when a prompt, threshold, or config change is justified by a hypothesis instead of evidence, and there is a backlog of questions worth answering unattended. Do not reach for it for a one-off "does wording B beat A" check; copy the bundled harness and run one battery manually instead.
+Useful when you want evidence before changing a prompt, threshold, or config, and there is a pile of "is this actually true?" questions worth answering unattended.
 
-How to use it:
+Say something like:
 
-1. **Instantiate** (interactive, once). Invoke the skill in the target repo. It interviews you for the subject, the protected production paths, where existing artifacts live (MINE tier), the expensive tier (FULL), the model/config to mirror, and the per-iteration API budget. It then scaffolds a self-contained `research/<slug>-autoresearch/` directory from `templates/`.
-2. **Turn the goal into questions.** "Improve the prompt" is a goal, not a question. The skill helps write `QUESTIONS.md`: Q0 (are the fixtures realistic?) always gates everything, "what actually fails today" (free, mined from real data) comes before "does my fix work" (paid micro-calls), and every question carries a falsifiable numeric prediction.
-3. **Port and label.** Production prompts go byte-faithful into `harnesses/prompts.py` as v1; labeled cases go into `fixtures/cases.jsonl` (tag cases per source dataset to compare datasets via `--tags`). Two marked seams in `micro_runner.py` adapt scoring to your domain.
-4. **Run the loop.** `./loop.sh` spawns one headless `claude -p` iteration at a time: pick one question, pre-register a prediction in a dated log, run the cheapest tier that answers it (always with a v1/v1 control battery), inspect raw outputs manually, append to the notebook, commit. `touch STOP` stops it gracefully; it stops itself when every question is RESOLVED or BLOCKED.
-5. **Consume the results.** Findings land in `NOTEBOOK.md` and `reports/` (recommendations mapped to your plan doc or ticket). Open `viewer.html` in a browser to inspect campaign JSONs: click a case to fold open per-rep answers, rationales, latency, and raw output; load two batteries for a control-vs-variant comparison.
+> "Our judge prompt seems to answer *none* too often. Before we rewrite it, I want the two wording variants tested against real cases. Set up an autoresearch loop."
 
-The scaffolded directory is fully self-contained: it runs headless with no dependency on this skill being installed, and each instantiation may freely edit its own harness copies.
+The skill converts that into steps:
+
+1. **Scaffold** — interviews you (subject, protected paths, data sources, model config, budget) and creates a self-contained `research/<slug>-autoresearch/` folder.
+2. **Goal → questions** — turns "improve the prompt" into falsifiable questions in `QUESTIONS.md`, each with a numeric prediction; "what actually fails today" (free data mining) always comes before "does my fix work" (paid calls).
+3. **Port + label** — production prompt goes byte-faithful into `harnesses/prompts.py` as v1; labeled cases into `fixtures/cases.jsonl`.
+4. **Run** — `./loop.sh` grinds through the questions, one headless experiment per iteration, committing its evidence as it goes. `touch STOP` stops it.
+5. **Read results** — findings in `NOTEBOOK.md` and `reports/`; open `viewer.html` to click through cases, model rationales, and control-vs-variant comparisons.
+
+Not for a one-off "does wording B beat A" check — copy the bundled harness and run one battery manually instead. The scaffolded folder is fully self-contained; the loop runs without this skill installed.
 
 ## Repository layout
 
