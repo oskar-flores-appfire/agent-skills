@@ -54,7 +54,9 @@
 <h1>autoresearch campaign viewer</h1>
 <p class="hint">Offline inspector for <code>campaigns/&lt;slug&gt;/&lt;battery&gt;.json</code>
 files written by <code>micro_runner.py</code>. Load two or more batteries for a
-control-vs-variant comparison. Click a case row to fold open its reps.</p>
+control-vs-variant comparison. Click a case row to fold open its reps.
+When served over HTTP (e.g. <code>python3 -m http.server</code>), batteries can
+also be preloaded via <code>?files=path/a.json,path/b.json</code>.</p>
 
 <input type="file" id="picker" multiple accept=".json,application/json">
 <div id="drop">or drop battery JSON files here</div>
@@ -84,17 +86,31 @@ function label(battery) {
   return `${b.system ?? "?"}/${b.user ?? "?"}`;
 }
 
+function addBattery(data, name) {
+  if (!Array.isArray(data.results)) { alert(`${name}: no results[] array`); return; }
+  data._file = name;
+  state.batteries.push(data);
+  refreshTagOptions();
+  render();
+}
+
 function loadFiles(fileList) {
   for (const file of fileList) {
     file.text().then((text) => {
       let data;
       try { data = JSON.parse(text); } catch { alert(`${file.name}: not valid JSON`); return; }
-      if (!Array.isArray(data.results)) { alert(`${file.name}: no results[] array`); return; }
-      data._file = file.name;
-      state.batteries.push(data);
-      refreshTagOptions();
-      render();
+      addBattery(data, file.name);
     });
+  }
+}
+
+const preload = new URLSearchParams(location.search).get("files");
+if (preload) {
+  for (const path of preload.split(",")) {
+    fetch(path.trim())
+      .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then((data) => addBattery(data, path.trim().split("/").pop()))
+      .catch((e) => console.log(`viewer: could not preload ${path.trim()}: ${e}`));
   }
 }
 
