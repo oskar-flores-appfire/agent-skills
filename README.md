@@ -13,6 +13,7 @@ npx skills add oskar-flores-appfire/agent-skills
 # Install one specific skill
 npx skills add oskar-flores-appfire/agent-skills --skill spec-summarizer
 npx skills add oskar-flores-appfire/agent-skills --skill building-interactive-decks
+npx skills add oskar-flores-appfire/agent-skills --skill autoresearch
 
 # Install everything, non-interactively, for Claude Code
 npx skills add oskar-flores-appfire/agent-skills --skill '*' -a claude-code -y
@@ -32,6 +33,7 @@ Skills land in your agent's skills directory (for Claude Code: `.claude/skills/`
 |---|---|
 | [`spec-summarizer`](skills/spec-summarizer/SKILL.md) | Turns a long technical spec, design doc, RFC, or PRD into a ~2-page GitHub-flavored summary that stakeholders actually read. Grounds every claim in the source, then validates the result with an automatic fresh-reader test before declaring done. |
 | [`building-interactive-decks`](skills/building-interactive-decks/SKILL.md) | House style and a reusable slide-deck engine for interactive presentations: one JS module per slide, keyboard-driven build steps, Motion-based animations, and a verification checklist. Ships the full `templates/` engine so a new deck starts with one copy command. |
+| [`autoresearch`](skills/autoresearch/SKILL.md) | Scaffolds a self-contained autonomous research loop that answers empirical questions about a prompt, threshold, or config with evidence before you implement changes: questions backlog, pre-registered experiments, tiered MINE/MICRO/FULL cost ladder, append-only lab notebook, headless `claude -p` driver, and an offline HTML results viewer. |
 
 ### spec-summarizer
 
@@ -58,6 +60,20 @@ Three steps:
 
 The engine handles keyboard navigation, per-slide build steps, an overview grid, and instant replay when stepping back. It is fully self-contained; the only external dependency is the Motion animation CDN.
 
+### autoresearch
+
+Use it when a prompt, threshold, or config change is justified by a hypothesis instead of evidence, and there is a backlog of questions worth answering unattended. Do not reach for it for a one-off "does wording B beat A" check; copy the bundled harness and run one battery manually instead.
+
+How to use it:
+
+1. **Instantiate** (interactive, once). Invoke the skill in the target repo. It interviews you for the subject, the protected production paths, where existing artifacts live (MINE tier), the expensive tier (FULL), the model/config to mirror, and the per-iteration API budget. It then scaffolds a self-contained `research/<slug>-autoresearch/` directory from `templates/`.
+2. **Turn the goal into questions.** "Improve the prompt" is a goal, not a question. The skill helps write `QUESTIONS.md`: Q0 (are the fixtures realistic?) always gates everything, "what actually fails today" (free, mined from real data) comes before "does my fix work" (paid micro-calls), and every question carries a falsifiable numeric prediction.
+3. **Port and label.** Production prompts go byte-faithful into `harnesses/prompts.py` as v1; labeled cases go into `fixtures/cases.jsonl` (tag cases per source dataset to compare datasets via `--tags`). Two marked seams in `micro_runner.py` adapt scoring to your domain.
+4. **Run the loop.** `./loop.sh` spawns one headless `claude -p` iteration at a time: pick one question, pre-register a prediction in a dated log, run the cheapest tier that answers it (always with a v1/v1 control battery), inspect raw outputs manually, append to the notebook, commit. `touch STOP` stops it gracefully; it stops itself when every question is RESOLVED or BLOCKED.
+5. **Consume the results.** Findings land in `NOTEBOOK.md` and `reports/` (recommendations mapped to your plan doc or ticket). Open `viewer.html` in a browser to inspect campaign JSONs: click a case to fold open per-rep answers, rationales, latency, and raw output; load two batteries for a control-vs-variant comparison.
+
+The scaffolded directory is fully self-contained: it runs headless with no dependency on this skill being installed, and each instantiation may freely edit its own harness copies.
+
 ## Repository layout
 
 ```
@@ -68,6 +84,10 @@ skills/
   building-interactive-decks/
     SKILL.md                  skill definition and conventions
     templates/                copy-paste deck engine (index.html + modules)
+  autoresearch/
+    SKILL.md                  skill definition and instantiation procedure
+    templates/                copy-paste research-loop scaffold (driver,
+                              protocol, harness, fixtures, viewer.html)
 ```
 
 ## Adding a new skill

@@ -1,0 +1,9 @@
+# Labeled cases, one JSON object per line. Lines starting with # are skipped.
+# Required: id, expected. Optional: tags (list), accepted (list, defaults to
+# [expected]). All other fields are yours: build_user_v1(case) reads them.
+# Answers must be hashable (int or string) so majority voting works.
+# Tag conventions that pay off: one tag per source dataset, one per failure
+# mode, "synthetic" vs "mined" provenance.
+# Replace these examples with real cases, then run the Q0 realism gate.
+{"id": "case-01", "tags": ["dataset-a", "synthetic"], "expected": 1, "input_text": "example new item text", "candidates": [{"title": "candidate one", "body": "..."}, {"title": "candidate two", "body": "..."}]}
+{"id": "case-02", "tags": ["dataset-b", "synthetic"], "expected": 0, "input_text": "example with no correct match", "candidates": [{"title": "unrelated", "body": "..."}]}
