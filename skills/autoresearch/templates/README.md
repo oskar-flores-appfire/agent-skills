@@ -2,8 +2,7 @@
 
 Machinery for running automated research loops about
 {{SUBJECT: what is being investigated}}, scaffolded from the `autoresearch`
-skill (modeled on
-[superpowers-autoresearch](https://github.com/prime-radiant-inc/superpowers-autoresearch)).
+skill.
 
 The goal is to answer the open questions in {{DECISION_TARGET: plan doc /
 ticket}} with EVIDENCE before implementing them.
@@ -17,7 +16,8 @@ recommendations). It never edits production code under
 ```
            +--------------------------------------------------+
            |                    loop.sh                        |
-           |  (spawns one claude -p iteration at a time)       |
+           |  (spawns one headless engine iteration at a time: |
+           |   claude -p | codex exec | custom command)        |
            +------------------------+-------------------------+
                                     |
                                     v
@@ -30,10 +30,10 @@ recommendations). It never edits production code under
               run the CHEAPEST tier that can answer it
                                     |
                                     v
-   record result in NOTEBOOK.md, update QUESTIONS.md, commit
+     record result in NOTEBOOK.md, update QUESTIONS.md
                                     |
                                     v
-              all questions resolved? ---> touch STOP
+   loop.sh commits the artifacts; all questions resolved? ---> touch STOP
 ```
 
 ## Tiers (ordered by cost, always try the cheaper tier first)
@@ -65,8 +65,8 @@ recommendations). It never edits production code under
 README.md          this file
 QUESTIONS.md       open research questions backlog (the loop's work queue)
 NOTEBOOK.md        append-only lab notebook, one entry per experiment
-LOOP_PROMPT.md     per-iteration protocol given to claude -p
-loop.sh            the driver
+LOOP_PROMPT.md     per-iteration protocol fed to the engine
+loop.sh            the driver (also commits each iteration's artifacts)
 harnesses/
   prompts.py       production prompt v1 verbatim + variants + user builders
   micro_runner.py  stdlib-only micro-test runner
@@ -84,7 +84,8 @@ STOP               create this file to stop the loop
 
 - {{MICRO_API_KEY_ENV}} in the environment for MICRO. The harness should match
   production model and temperature: {{MODEL_AND_CONFIG: e.g. gpt-5.4, temp 0.0}}.
-- `claude` CLI for `loop.sh`.
+- An agent CLI with a headless mode for `loop.sh`: `claude` (default) or
+  `codex` (`ENGINE=codex`); any other CLI via `AUTORESEARCH_AGENT_CMD`.
 - MINE: {{MINE_REQUIREMENTS: e.g. a running local DB, or a read-only cloud
   profile}}.
 - FULL: {{FULL_REQUIREMENTS: e.g. toolchain and one-time build steps}}.
@@ -93,18 +94,39 @@ STOP               create this file to stop the loop
 
 ```bash
 cd {{RESEARCH_DIR}}
-./loop.sh              # 5 iterations max by default
+./loop.sh              # Claude Code, 5 iterations max by default
 MAX_ITER=10 ./loop.sh  # more
+ENGINE=codex ./loop.sh # OpenAI Codex CLI instead
 touch STOP             # graceful stop after the current iteration
 ```
 
-`loop.sh` passes NO permission flags to `claude -p` by default; headless
-iterations will fail on tool calls your settings do not allow. Choose your own
-posture explicitly, e.g.
-`AUTORESEARCH_CLAUDE_FLAGS="--permission-mode acceptEdits" ./loop.sh`.
+`loop.sh` passes NO permission flags to the engine by default; headless
+iterations will fail on tool calls your engine's settings do not allow. Choose
+your own posture explicitly:
 
-Running `loop.sh` is your explicit consent for each iteration to commit its
-artifacts on this branch. Nothing is ever pushed.
+```bash
+# Claude Code
+AUTORESEARCH_AGENT_FLAGS="--permission-mode acceptEdits" ./loop.sh
+
+# Codex (exec defaults to a read-only sandbox; the loop needs workspace writes)
+ENGINE=codex AUTORESEARCH_AGENT_FLAGS="--sandbox workspace-write" ./loop.sh
+
+# Any other engine: full command line, LOOP_PROMPT.md arrives on stdin
+AUTORESEARCH_AGENT_CMD='opencode run "$(cat LOOP_PROMPT.md)"' ./loop.sh
+```
+
+Codex-specific notes:
+
+- MICRO needs network inside the sandbox: add `[sandbox_workspace_write]`
+  `network_access = true` to `~/.codex/config.toml`, or every MICRO question
+  comes back BLOCKED.
+- The Codex sandbox keeps `.git` read-only; that is fine here because commits
+  are made by `loop.sh` after each iteration, never by the agent.
+- Headless `codex exec` fails in untrusted directories; run `codex` once
+  interactively in this repo to trust it first.
+
+Running `loop.sh` is your explicit consent for the DRIVER to commit each
+iteration's research artifacts on this branch. Nothing is ever pushed.
 
 ## Inspecting results
 

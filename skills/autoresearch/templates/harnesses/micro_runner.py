@@ -122,9 +122,9 @@ def parse_verdict(content, case):
     Default contract: the prompt asks for JSON like
     {"answer": <value>, "rationale": "..."} and this returns
     {"status", "answer", "rationale"}. Port your production response parsing
-    here so scoring matches production semantics. Example: the SignalIQ judge
-    parsed {"selectedCandidate": int, "rationale": str}, coerced digit
-    strings to int, and range-checked the index against
+    here so scoring matches production semantics. Example: a candidate-
+    selection judge parsed {"selectedCandidate": int, "rationale": str},
+    coerced digit strings to int, and range-checked the index against
     len(case["candidates"]) with statuses unparseable/empty/out-of-range.
     """
     try:
@@ -177,8 +177,8 @@ def run_case(case, system_prompt, build_user, args, api_key):
 def summarize(results):
     """EDIT SEAM 2: add domain metrics next to the generic ones.
 
-    Example: the SignalIQ judge added none_recall (accuracy on the subset
-    where expected == 0) because wrong nones were its dominant failure mode.
+    Example: a judge whose dominant failure mode was wrong "none" answers
+    added none_recall (accuracy on the subset where expected == 0).
     """
     scored = [r for r in results if r["majority"] is not None]
     total = len(results)

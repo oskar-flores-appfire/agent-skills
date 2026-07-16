@@ -9,9 +9,9 @@ description: Use when empirical questions about a prompt, threshold, or config s
 
 Scaffold and instantiate an autonomous research loop that grinds through a
 backlog of falsifiable questions, one pre-registered experiment per iteration,
-and leaves an evidence trail a reviewer can trust a week later. Modeled on
-[superpowers-autoresearch](https://github.com/prime-radiant-inc/superpowers-autoresearch),
-generalized from the SignalIQ LLM-judge research loop (ITRE-480).
+and leaves an evidence trail a reviewer can trust a week later. The loop is
+engine-agnostic: any agent CLI with a headless mode can drive it (Claude Code
+by default, Codex via `ENGINE=codex`, others via `AUTORESEARCH_AGENT_CMD`).
 
 Core principle: the loop does not "improve" anything directly. It resolves
 QUESTIONS with evidence; implementation happens afterwards, elsewhere, guided
@@ -58,14 +58,16 @@ Collect, with concrete suggestions from the codebase where possible:
 | FULL tier | The expensive tier (test suite, pipeline replay) and its prereqs |
 | MICRO_API_KEY_ENV, model, temperature | Match production exactly |
 | MAX_API_CALLS | Per-iteration budget (default 60) |
-| COMMIT_PREFIX, COMMIT_FLAGS | Commit convention; `--no-verify` if hooks block |
+| ENGINE | Agent CLI that drives iterations: `claude` (default) or `codex`; any other CLI via `AUTORESEARCH_AGENT_CMD` |
+| COMMIT_PREFIX, COMMIT_FLAGS | Commit convention, applied by the driver; set as the defaults at the top of `loop.sh` (`--no-verify` if hooks block) |
 
 ### 2. Scaffold
 
 Copy everything under `templates/` into RESEARCH_DIR (preserve the directory
 structure: `harnesses/`, `fixtures/`, `logs/`), then `chmod +x loop.sh` and
 `mkdir -p campaigns mining reports`. Fill every `{{PLACEHOLDER}}` in
-`LOOP_PROMPT.md`, `README.md`, and `QUESTIONS.md` from the interview. Grep for
+`LOOP_PROMPT.md`, `README.md`, and `QUESTIONS.md` from the interview, and set
+the `COMMIT_PREFIX`/`COMMIT_FLAGS` defaults at the top of `loop.sh`. Grep for
 `{{` afterwards; none may remain.
 
 ### 3. Write QUESTIONS.md with the operator
@@ -107,15 +109,16 @@ synthetic ones.
 
 ### 8. Hand off
 
-Tell the operator: how to launch (`./loop.sh`, `MAX_ITER`, permission posture
-via `AUTORESEARCH_CLAUDE_FLAGS`), how to stop (`touch STOP`), where results
+Tell the operator: how to launch (`./loop.sh`, `ENGINE`, `MAX_ITER`,
+permission posture via `AUTORESEARCH_AGENT_FLAGS`; engine-specific notes live
+in the scaffolded README "Launch" section), how to stop (`touch STOP`), where results
 land (NOTEBOOK.md, `reports/`), and how to inspect campaigns: `viewer.html`
 in a browser (file picker or drag and drop), or serve the research directory
 with `python3 -m http.server` and open
 `viewer.html?files=<control>.json,<variant>.json` for a preloaded one-link
 view (the first file listed is the comparison baseline).
-Launching the loop is the operator's consent for per-iteration commits;
-nothing is ever pushed.
+Launching the loop is the operator's consent for the driver's per-iteration
+commits; nothing is ever pushed.
 
 ## Binding method rules
 
@@ -125,7 +128,7 @@ The six quality gates in the scaffolded `README.md` bind every iteration;
 ## Self-containment rule
 
 The scaffolded directory must run headless with NO dependency on this skill
-being installed. `loop.sh` inlines `LOOP_PROMPT.md`; the harness is stdlib
-Python; the viewer is one static HTML file. Each instantiation may freely
+being installed. `loop.sh` feeds `LOOP_PROMPT.md` to the engine on stdin; the
+harness is stdlib Python; the viewer is one static HTML file. Each instantiation may freely
 edit its own copies (harness fixes are legitimate per-iteration artifacts)
 without touching the skill.

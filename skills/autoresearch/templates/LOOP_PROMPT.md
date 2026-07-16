@@ -1,7 +1,7 @@
 # Autoresearch iteration protocol
 
 You are one iteration of an autonomous research loop investigating:
-{{SUBJECT: one line, e.g. "the SignalIQ group-classification LLM prompt"}}.
+{{SUBJECT: one line, e.g. "the group-classification LLM judge prompt"}}.
 Your working directory is `{{RESEARCH_DIR: e.g. research/<slug>-autoresearch/}}`
 on branch `{{BRANCH}}`. Do exactly ONE experiment, record it, commit, and stop.
 
@@ -61,13 +61,13 @@ on branch `{{BRANCH}}`. Do exactly ONE experiment, record it, commit, and stop.
    {{DECISION_TARGET: the plan doc, ticket, or decision the loop informs}},
    with evidence links.
 
-7. Commit from the repo root:
-   `git add {{RESEARCH_DIR}} && git commit {{COMMIT_FLAGS: e.g. --no-verify if
-   a pre-commit hook blocks research commits}} -m
-   "{{COMMIT_PREFIX: e.g. TICKET-123: autoresearch}} <slug>"`.
+7. Do NOT run `git add` or `git commit`; leave every artifact saved to disk.
+   The driver (`loop.sh`) commits everything under `{{RESEARCH_DIR}}` when the
+   iteration ends. (In-agent commits are not portable: some engine sandboxes
+   keep `.git` read-only.)
 
 8. Stop condition. If every question in `QUESTIONS.md` is RESOLVED or BLOCKED,
-   write a final summary to `reports/final-summary.md`, commit it, and create
-   the file `STOP` in `{{RESEARCH_DIR}}`.
+   write a final summary to `reports/final-summary.md` and create the file
+   `STOP` in `{{RESEARCH_DIR}}`.
 
 Then end your turn. Do not start a second experiment.

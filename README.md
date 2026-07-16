@@ -33,7 +33,7 @@ Skills land in your agent's skills directory (for Claude Code: `.claude/skills/`
 |---|---|
 | [`spec-summarizer`](skills/spec-summarizer/SKILL.md) | Turns a long technical spec, design doc, RFC, or PRD into a ~2-page GitHub-flavored summary that stakeholders actually read. Grounds every claim in the source, then validates the result with an automatic fresh-reader test before declaring done. |
 | [`building-interactive-decks`](skills/building-interactive-decks/SKILL.md) | House style and a reusable slide-deck engine for interactive presentations: one JS module per slide, keyboard-driven build steps, Motion-based animations, and a verification checklist. Ships the full `templates/` engine so a new deck starts with one copy command. |
-| [`autoresearch`](skills/autoresearch/SKILL.md) | Scaffolds a self-contained autonomous research loop that answers empirical questions about a prompt, threshold, or config with evidence before you implement changes: questions backlog, pre-registered experiments, tiered MINE/MICRO/FULL cost ladder, append-only lab notebook, headless `claude -p` driver, and an offline HTML results viewer. |
+| [`autoresearch`](skills/autoresearch/SKILL.md) | Scaffolds a self-contained autonomous research loop that answers empirical questions about a prompt, threshold, or config with evidence before you implement changes: questions backlog, pre-registered experiments, tiered MINE/MICRO/FULL cost ladder, append-only lab notebook, an engine-agnostic headless driver (Claude Code by default, Codex via `ENGINE=codex`), and an offline HTML results viewer. |
 
 ### spec-summarizer
 
@@ -73,7 +73,7 @@ The skill converts that into steps:
 1. **Scaffold**: interviews you (subject, protected paths, data sources, model config, budget) and creates a self-contained `research/<slug>-autoresearch/` folder.
 2. **Goal → questions**: turns "improve the prompt" into falsifiable questions in `QUESTIONS.md`, each with a numeric prediction; "what actually fails today" (free data mining) always comes before "does my fix work" (paid calls).
 3. **Port + label**: production prompt goes byte-faithful into `harnesses/prompts.py` as v1; labeled cases into `fixtures/cases.jsonl`.
-4. **Run**: `./loop.sh` grinds through the questions, one headless experiment per iteration, committing its evidence as it goes. `touch STOP` stops it.
+4. **Run**: `./loop.sh` grinds through the questions, one headless experiment per iteration, committing its evidence as it goes (Claude Code by default; `ENGINE=codex` for Codex; any other agent CLI via `AUTORESEARCH_AGENT_CMD`). `touch STOP` stops it.
 5. **Read results**: findings in `NOTEBOOK.md` and `reports/`; open `viewer.html` to click through cases, model rationales, and control-vs-variant comparisons.
 
 Not for a one-off "does wording B beat A" check; copy the bundled harness and run one battery manually instead. The scaffolded folder is fully self-contained; the loop runs without this skill installed.
